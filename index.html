@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Numeronym Generator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .container:hover {
+            transform: translateY(-5px);
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1rem;
+        }
+
+        .input-group {
+            margin-bottom: 30px;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 15px 20px;
+            font-size: 1.1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 50px;
+            outline: none;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        input[type="text"]:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 20px rgba(102, 126, 234, 0.3);
+            transform: scale(1.02);
+        }
+
+        .generate-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 10px;
+            min-width: 140px;
+        }
+
+        .generate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .result {
+            margin-top: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, #f8f9ff, #e6f0ff);
+            border-radius: 15px;
+            border-left: 5px solid #667eea;
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .result.show {
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .result-text {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #333;
+            font-family: 'Courier New', monospace;
+        }
+
+        .example {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(102, 126, 234, 0.1);
+            border-radius: 10px;
+            font-size: 0.9rem;
+            color: #555;
+        }
+
+        .word-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .word-tag {
+            background: rgba(102, 126, 234, 0.1);
+            color: #667eea;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .word-tag:hover {
+            background: #667eea;
+            color: white;
+            transform: scale(1.05);
+        }
+
+        .copy-btn {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            margin-left: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .copy-btn:hover {
+            background: #45a049;
+            transform: scale(1.05);
+        }
+
+        .copied {
+            background: #2196F3 !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Numeronym Generator</h1>
+        <p class="subtitle">Transform words into numeronyms like "kubernetes" → "k8s"</p>
+        
+        <div class="word-list">
+            <span class="word-tag" onclick="fillInput('kubernetes')">kubernetes</span>
+            <span class="word-tag" onclick="fillInput('internationalization')">internationalization</span>
+            <span class="word-tag" onclick="fillInput('localization')">localization</span>
+            <span class="word-tag" onclick="fillInput('accessibility')">accessibility</span>
+            <span class="word-tag" onclick="fillInput('authentication')">authentication</span>
+        </div>
+
+        <div class="input-group">
+            <input type="text" id="wordInput" placeholder="Enter a word (e.g., kubernetes)" autofocus>
+        </div>
+        
+        <button class="generate-btn" onclick="generateNumeronym()">Generate Numeronym</button>
+        <button class="generate-btn" onclick="clearAll()">Clear</button>
+        
+        <div class="result" id="result">
+            <span class="result-text" id="resultText">Enter a word above to generate its numeronym</span>
+        </div>
+        
+        <div class="example">
+            <strong>How it works:</strong> A numeronym takes the first letter, the count of middle letters, and the last letter.<br>
+            Examples: "kubernetes" → "k8s", "internationalization" → "i18n", "localization" → "l10n"
+        </div>
+    </div>
+
+    <script>
+        function generateNumeronym() {
+            const input = document.getElementById('wordInput');
+            const word = input.value.trim().toLowerCase();
+            const resultDiv = document.getElementById('result');
+            const resultText = document.getElementById('resultText');
+            
+            if (!word) {
+                resultText.innerHTML = 'Please enter a word first!';
+                resultDiv.className = 'result show';
+                return;
+            }
+            
+            if (word.length < 3) {
+                resultText.innerHTML = 'Word must be at least 3 characters long!';
+                resultDiv.className = 'result show';
+                return;
+            }
+            
+            const numeronym = createNumeronym(word);
+            const middleCount = word.length - 2;
+            
+            resultText.innerHTML = `
+                <span style="color: #667eea;">"${word}"</span> → 
+                <span style="color: #764ba2; font-size: 1.8rem;">"${numeronym}"</span>
+                <button class="copy-btn" onclick="copyToClipboard('${numeronym}', this)">Copy</button>
+                <br><small style="color: #888; font-size: 1rem; margin-top: 10px; display: block;">
+                    ${word[0]} + ${middleCount} letters + ${word[word.length - 1]}
+                </small>
+            `;
+            
+            resultDiv.className = 'result show';
+        }
+        
+        function createNumeronym(word) {
+            if (word.length < 3) return word;
+            
+            const firstChar = word[0];
+            const lastChar = word[word.length - 1];
+            const middleCount = word.length - 2;
+            
+            return firstChar + middleCount + lastChar;
+        }
+        
+        function fillInput(word) {
+            document.getElementById('wordInput').value = word;
+            generateNumeronym();
+        }
+        
+        function clearAll() {
+            document.getElementById('wordInput').value = '';
+            const resultText = document.getElementById('resultText');
+            const resultDiv = document.getElementById('result');
+            
+            resultText.innerHTML = 'Enter a word above to generate its numeronym';
+            resultDiv.className = 'result';
+        }
+        
+        function copyToClipboard(text, button) {
+            navigator.clipboard.writeText(text).then(() => {
+                const originalText = button.textContent;
+                button.textContent = 'Copied!';
+                button.classList.add('copied');
+                
+                setTimeout(() => {
+                    button.textContent = originalText;
+                    button.classList.remove('copied');
+                }, 1500);
+            }).catch(() => {
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = text;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                
+                button.textContent = 'Copied!';
+                button.classList.add('copied');
+                setTimeout(() => {
+                    button.textContent = 'Copy';
+                    button.classList.remove('copied');
+                }, 1500);
+            });
+        }
+        
+        // Allow Enter key to generate numeronym
+        document.getElementById('wordInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                generateNumeronym();
+            }
+        });
+        
+        // Auto-generate as user types (with debounce)
+        let timeout;
+        document.getElementById('wordInput').addEventListener('input', function() {
+            clearTimeout(timeout);
+            timeout = setTimeout(() => {
+                if (this.value.trim().length >= 3) {
+                    generateNumeronym();
+                }
+            }, 500);
+        });
+    </script>
+</body>
+</html>
